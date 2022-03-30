@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "213181095964",
+    "project_id": "ownlinkjitsi",
+    "storage_bucket": "ownlinkjitsi.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:213181095964:android:0db6c1483577a1a4a6bfd9",
+        "android_client_info": {
+          "package_name": "OwnLinkJitsi.fsin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "213181095964-nng25nvmkqgpq3h14lnvb87soov7md7b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-vasUmXHsd3BOM3GD4eghHcmQsulZxbI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "213181095964-nng25nvmkqgpq3h14lnvb87soov7md7b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
