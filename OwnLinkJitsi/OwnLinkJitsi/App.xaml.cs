@@ -56,7 +56,11 @@ namespace OwnLinkJitsi
             }
             catch (Exception ex)
             { }
-            MessagingCenter.Send<string, string>("App", "CallPage", room);
+            try
+            {
+                MessagingCenter.Send<string, string>("App", "CallPage", room);
+            }
+            catch(Exception ex) { }
         }
 
         private void Current_OnTokenRefresh(object source, FirebasePushNotificationTokenEventArgs e)

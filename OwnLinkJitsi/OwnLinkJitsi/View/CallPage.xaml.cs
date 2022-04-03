@@ -32,7 +32,7 @@ namespace OwnLinkJitsi.View
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            await Task.Delay(1000);
+            /*await Task.Delay(1000);
 
             var status = await Permissions.CheckStatusAsync<Permissions.Camera>();
             if (status != PermissionStatus.Granted)
@@ -50,7 +50,7 @@ namespace OwnLinkJitsi.View
                 if (response != PermissionStatus.Granted)
                 {
                 }
-            }
+            }*/
         }
     }
 }

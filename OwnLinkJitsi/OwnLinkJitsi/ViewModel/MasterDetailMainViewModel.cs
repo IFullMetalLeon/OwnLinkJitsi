@@ -152,6 +152,7 @@ namespace OwnLinkJitsi.ViewModel
         public void showCall(string _url)
         {
             Room = _url;
+            //MessagingCenter.Send<string, string>("Call", "CallState", Room);
         }
 
         public void showUri()

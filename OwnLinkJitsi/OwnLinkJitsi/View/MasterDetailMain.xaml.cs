@@ -28,9 +28,9 @@ namespace OwnLinkJitsi.View
         protected override void OnAppearing()
         {
             base.OnAppearing();
-
-
             
+
+
             mdmvm.startPage();
             isCallShow = 0;
             if (flag == 0)
@@ -41,7 +41,10 @@ namespace OwnLinkJitsi.View
                 NavigationPage.SetHasBackButton(this, false);
                 flag = 1;
             }
-
+            MessagingCenter.Subscribe<string, string>("Call", "CallState", (sender, arg) =>
+            {
+                showCall(arg.Trim());
+            });
 
         }
 
@@ -49,7 +52,7 @@ namespace OwnLinkJitsi.View
         {
             base.OnDisappearing();
             mdmvm.endPage();
-            
+            MessagingCenter.Unsubscribe<string, string>("Call", "CallState");
         }
 
         private void activeCall_Clicked(object sender, EventArgs e)
@@ -77,7 +80,7 @@ namespace OwnLinkJitsi.View
 
         private void showCall(string content)
         {
-            Detail = new NavigationPage(new CallPage(content));
+            Detail = new NavigationPage(new SettingPage());
             IsPresented = false;
         }
     }
