@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace OwnLinkJitsi
 {
@@ -40,5 +41,10 @@ namespace OwnLinkJitsi
     public interface IOpenSettings
     {
         void GoToSettings();
+    }
+
+    public interface IAppHandler
+    {
+        Task<bool> LaunchApp(string uri);
     }
 }

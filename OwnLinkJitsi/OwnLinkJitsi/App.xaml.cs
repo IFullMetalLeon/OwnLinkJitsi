@@ -19,16 +19,12 @@ namespace OwnLinkJitsi
 
             MainPage = new MainPage();
             FCMToken = "";
-            CrossFirebasePushNotification.Current.Subscribe("all");
-            CrossFirebasePushNotification.Current.OnTokenRefresh += Current_OnTokenRefresh;
-            CrossFirebasePushNotification.Current.OnNotificationReceived += Current_OnNotificationReceived;
+            
 
+            CrossSettings.Current.AddOrUpdateValue("sipPhoneLogin", "79041537453");
             string _login = CrossSettings.Current.GetValueOrDefault("sipPhoneLogin", "");
             string deviceId = CrossDeviceInfo.Current.Id;
             string deviceInfo = CrossDeviceInfo.Current.Manufacturer + " " + CrossDeviceInfo.Current.Model + " " + CrossDeviceInfo.Current.Platform + " " + CrossDeviceInfo.Current.Version;
-
-            CrossFirebasePushNotification.Current.Subscribe("all");
-            CrossFirebasePushNotification.Current.OnTokenRefresh += Current_OnTokenRefresh;
 
             //MainPage = new NavigationPage(new TestPage());
             if (_login == "")
@@ -47,26 +43,7 @@ namespace OwnLinkJitsi
 
         }
 
-        private void Current_OnNotificationReceived(object source, FirebasePushNotificationDataEventArgs e)
-        {
-            string room = "test";
-            try
-            {
-                room = e.Data["room_name"].ToString();
-            }
-            catch (Exception ex)
-            { }
-            try
-            {
-                MessagingCenter.Send<string, string>("App", "CallPage", room);
-            }
-            catch(Exception ex) { }
-        }
-
-        private void Current_OnTokenRefresh(object source, FirebasePushNotificationTokenEventArgs e)
-        {
-            MessagingCenter.Send<string, string>("App", "ChangeToken", e.Token);
-        }
+        
 
         protected override void OnStart()
         {

@@ -10,16 +10,24 @@ using Plugin.FirebasePushNotification;
 using Acr.UserDialogs;
 using System.Collections.Generic;
 using Android;
+using Android.Support.V4.App;
+using AndroidApp = Android.App.Application;
+using Android.Content;
+using Xamarin.Forms;
+using Android.Media;
 
 namespace OwnLinkJitsi.Droid
 {
-    [Activity(Label = "OwnLinkJitsi", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize )]
+    [Activity(Label = "OwnLinkJitsi", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize, ScreenOrientation = ScreenOrientation.Portrait)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         int PERMISSIONS_REQUEST = 101;
         public static MainActivity instance { set; get; }
         public static int NOTIFICATION_ID { get; internal set; }
-
+        const string channelId = "OwnLinkBG";
+        const string channelName = "OwnLinkBG";
+        const string channelDescription = "The OwnLinkBG channel for notifications.";
+        internal static readonly string CHANNEL_ID = "my_notification_channel";
         protected override void OnCreate(Bundle savedInstanceState)
         {
             TabLayoutResource = Resource.Layout.Tabbar;
@@ -32,9 +40,9 @@ namespace OwnLinkJitsi.Droid
             UserDialogs.Init(this);
 
             instance = this;
-
+            CreateNotificationChannel();
             LoadApplication(new App());
-            FirebasePushNotificationManager.ProcessIntent(this, Intent);
+            //FirebasePushNotificationManager.ProcessIntent(this, Intent);
             
         }
 
@@ -68,6 +76,42 @@ namespace OwnLinkJitsi.Droid
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+
+        void CreateNotificationChannel()
+        {
+            NotificationManager manager = (NotificationManager)AndroidApp.Context.GetSystemService(AndroidApp.NotificationService);
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            {
+                var channelNameJava = new Java.Lang.String(channelName);
+                var channel = new NotificationChannel(channelId, channelNameJava, NotificationImportance.Max)
+                {
+                    Description = channelDescription
+                };
+                channel.SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Ringtone), null);
+                //channel.SetSound(null, null);
+                channel.LockscreenVisibility = NotificationVisibility.Public;
+                channel.EnableVibration(true);
+
+                manager.CreateNotificationChannel(channel);
+            }
+
+        }
+
+        protected override void OnNewIntent(Intent intent)
+        {
+            CreateNotificationFromIntent(intent);
+        }
+
+        void CreateNotificationFromIntent(Intent intent)
+        {
+            if (intent?.Extras != null)
+            {
+                string title = intent.Extras.GetString(AndroidNotificationManager.TitleKey);
+                string message = intent.Extras.GetString(AndroidNotificationManager.MessageKey);
+                DependencyService.Get<INotificationManager>().ReceiveNotification(title, message);
+            }
         }
     }
 }

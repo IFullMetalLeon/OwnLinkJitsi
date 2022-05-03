@@ -191,7 +191,7 @@ namespace OwnLinkJitsi.ViewModel
 
         }
 
-        public static async void ReadySignSend(string _phone,string _deviceId,string _room)
+        public static async void ReadySignSend(string _phone,string _deviceId,string _room,string _status)
         {
             HttpClientHandler clientHandler = new HttpClientHandler();
             clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
@@ -202,6 +202,7 @@ namespace OwnLinkJitsi.ViewModel
             values.Add("phone", _phone);
             values.Add("token", _deviceId);
             values.Add("room", _room);
+            values.Add("status", _status);
 
             var response = await http.PostAsync(http.BaseAddress, new FormUrlEncodedContent(values));
             

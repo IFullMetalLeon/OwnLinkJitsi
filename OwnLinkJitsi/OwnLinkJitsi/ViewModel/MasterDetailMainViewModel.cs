@@ -36,7 +36,6 @@ namespace OwnLinkJitsi.ViewModel
         public int isNotifySend;
 
         public string _uri;
-
         public MasterDetailMainViewModel()
         {
             ChangePhone = new Command(changePhone);
@@ -54,31 +53,28 @@ namespace OwnLinkJitsi.ViewModel
             MessagingCenter.Subscribe<string, string>("HttpControler", "GetServerVersion", (sender, arg) => {
                 checkVersion(arg.Trim());
             });
-            MessagingCenter.Subscribe<string, string>("App", "CallPage", (sender, arg) => {
-                showCall(arg.Trim());
-            });
-            MessagingCenter.Subscribe<string, string>("App", "ChangeToken", (sender, arg) => {
-                changeToken(arg.Trim());
-            });
 
-            HttpControler.GetServerVersion();
+            //HttpControler.GetServerVersion();
             string s = CrossDeviceInfo.Current.DeviceName;
             string deviceId = CrossDeviceInfo.Current.Id;
             s = CrossDeviceInfo.Current.Model;
             s = CrossDeviceInfo.Current.Platform.ToString();
+
+            Room= CrossSettings.Current.GetValueOrDefault("currentRoom", "");
 
             Phone = CrossSettings.Current.GetValueOrDefault("sipPhoneLogin", "");
             _pass = CrossSettings.Current.GetValueOrDefault("sipPhonePass", "");
 
             VersionNumber = "Версия " + CrossDeviceInfo.Current.AppVersion;
 
-            string curFCMToken = ((App)App.Current).FCMToken;
+
+            string curFCMToken = fCMService.GetToken();
 
             if (!String.IsNullOrEmpty(curFCMToken))
                 HttpControler.FCMTokenSend(Phone, curFCMToken, deviceId);
 
 
-
+            ReceiveCall = false;
             RegStatus = "Оффлайн";
             RegStatusIcon = "StatusOffline.png";
 
@@ -89,28 +85,32 @@ namespace OwnLinkJitsi.ViewModel
             string isNotificationPermission = CrossSettings.Current.GetValueOrDefault("sipNotifyPer", "0");
             if (isNotificationPermission == "0")
             {
-                checkNotifyPermission();
+                //checkNotifyPermission();
             }
+
+            /*CrossFirebasePushNotification.Current.Subscribe("all");
+            CrossFirebasePushNotification.Current.OnTokenRefresh += Current_OnTokenRefresh;
+            CrossFirebasePushNotification.Current.OnNotificationReceived += Current_OnNotificationReceived;
+            CrossFirebasePushNotification.Current.OnNotificationOpened += Current_OnNotificationOpened;
+            CrossFirebasePushNotification.Current.OnNotificationAction += Current_OnNotificationAction;*/
+
+            /*if (!String.IsNullOrEmpty(Room))
+            {
+                enterRoom();
+            }*/
         }
 
+        
 
         public void endPage()
         {
             MessagingCenter.Unsubscribe<string, string>("HttpControler", "GetServerVersion");
-            MessagingCenter.Unsubscribe<string, string>("App", "CallPage");
-            MessagingCenter.Unsubscribe<string, string>("App", "ChangeToken");
         }
 
         public void changePhone()
-        {            
-            Navigation.PushAsync(new LoginPage());
-        }
-
-        public void changeToken(string _token)
         {
-            string deviceId = CrossDeviceInfo.Current.Id;
-            if (!String.IsNullOrEmpty(_token))
-                HttpControler.FCMTokenSend(Phone, _token, deviceId);
+            MessagingCenter.Send<string, string>("Call", "CallState", Room);
+            //Navigation.PushAsync(new LoginPage());
         }
 
         public async void checkVersion(string versionNum)
@@ -149,10 +149,16 @@ namespace OwnLinkJitsi.ViewModel
             }
         }
 
+        public async void enterRoom()
+        {
+
+            ReceiveCall = true;
+        }
+
         public void showCall(string _url)
         {
             Room = _url;
-            //MessagingCenter.Send<string, string>("Call", "CallState", Room);
+            //enterRoom();
         }
 
         public void showUri()
@@ -160,6 +166,57 @@ namespace OwnLinkJitsi.ViewModel
             Launcher.OpenAsync(_uri);
         }
 
+        private void Current_OnNotificationOpened(object source, FirebasePushNotificationResponseEventArgs e)
+        {
+            /*string room = "test";
+            try
+            {
+                Room = e.Data["room_name"].ToString();
+                CrossSettings.Current.AddOrUpdateValue("currentRoom", room);
+                enterRoom();
+            }
+            catch (Exception ex)
+            { }*/
+        }
+
+        private void Current_OnNotificationReceived(object source, FirebasePushNotificationDataEventArgs e)
+        {
+            /*string room = "test";
+            try
+            {
+                Room = e.Data["room_name"].ToString();
+                CrossSettings.Current.AddOrUpdateValue("currentRoom", room);
+                enterRoom();
+            }
+            catch (Exception ex)
+            { }*/
+
+        }
+
+        /*private void Current_OnTokenRefresh(object source, FirebasePushNotificationTokenEventArgs e)
+        {
+            CrossSettings.Current.AddOrUpdateValue("FCMToken", e.Token);
+            string deviceId = CrossDeviceInfo.Current.Id;
+            if (!String.IsNullOrEmpty(e.Token))
+                HttpControler.FCMTokenSend(Phone, e.Token, deviceId);
+        }
+
+        private void Current_OnNotificationAction(object source, FirebasePushNotificationResponseEventArgs e)
+        {
+            CrossFirebasePushNotification.Current.ClearAllNotifications();
+            if (e.Identifier == "Accept")
+            {
+                string room = "test";
+                try
+                {
+                    Room = e.Data["room_name"].ToString();
+                    CrossSettings.Current.AddOrUpdateValue("currentRoom", room);
+                    enterRoom();
+                }
+                catch (Exception ex)
+                { }
+            }
+        }*/
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -245,9 +302,23 @@ namespace OwnLinkJitsi.ViewModel
                 {
                     _room = value;
                     OnPropertyChanged("Room");
+                    OnPropertyChanged("IsActiveCall");
 
                 }
             }
         }
+
+        public bool IsActiveCall
+        {
+            get
+            {
+                if (!String.IsNullOrEmpty(Room))
+                    return true;
+                else
+                    return false;
+            }
+        }
+
+        public bool ReceiveCall { get; set; }
     }
 }

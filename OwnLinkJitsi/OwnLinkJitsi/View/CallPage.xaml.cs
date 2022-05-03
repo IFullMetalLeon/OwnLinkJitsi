@@ -9,6 +9,7 @@ using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using OwnLinkJitsi.ViewModel;
+using Plugin.FirebasePushNotification;
 
 namespace OwnLinkJitsi.View
 {
@@ -17,22 +18,24 @@ namespace OwnLinkJitsi.View
     {
         public CallPage(string _url)
         {
-            InitializeComponent();
-
-            var urlSource = new UrlWebViewSource();
-            //string baseUrl = DependencyService.Get<IWebViewService>().GetContent();
-            urlSource.Url = "https://meet.pismo-fsin.ru/" + _url;
-            CallWebView.Source = urlSource;
+            InitializeComponent();           
             string deviceId = CrossDeviceInfo.Current.Id;
             string phone = CrossSettings.Current.GetValueOrDefault("sipPhoneLogin", "");
-            HttpControler.ReadySignSend(phone, deviceId, _url);
+            HttpControler.ReadySignSend(phone, deviceId, _url,"Accept");
+            CrossSettings.Current.AddOrUpdateValue("currentRoom", "");
+            CrossFirebasePushNotification.Current.ClearAllNotifications();
+            enterRoom(_url);
+        }
 
+        public async void enterRoom(string _room)
+        {
+            await DependencyService.Get<IAppHandler>().LaunchApp(_room);
         }
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            /*await Task.Delay(1000);
+            await Task.Delay(1000);
 
             var status = await Permissions.CheckStatusAsync<Permissions.Camera>();
             if (status != PermissionStatus.Granted)
@@ -50,7 +53,7 @@ namespace OwnLinkJitsi.View
                 if (response != PermissionStatus.Granted)
                 {
                 }
-            }*/
+            }
         }
     }
 }

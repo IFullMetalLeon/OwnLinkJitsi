@@ -45,7 +45,7 @@ namespace OwnLinkJitsi.View
             {
                 showCall(arg.Trim());
             });
-
+            Device.StartTimer(TimeSpan.FromSeconds(1), OnTimerTick);
         }
 
         protected override void OnDisappearing()
@@ -78,10 +78,22 @@ namespace OwnLinkJitsi.View
             mdmvm.showUri();
         }
 
-        private void showCall(string content)
+        public void showCall(string content)
         {
-            Detail = new NavigationPage(new SettingPage());
+            //Detail = new NavigationPage(new SettingPage());
             IsPresented = false;
+        }
+
+        private bool OnTimerTick()
+        {
+            if (mdmvm.ReceiveCall)
+            {
+                Detail = new NavigationPage(new CallPage(mdmvm.Room));
+                IsPresented = false;
+                return false;
+            }
+            else
+                return true;
         }
     }
 }

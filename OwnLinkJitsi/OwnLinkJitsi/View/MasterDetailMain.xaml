@@ -64,7 +64,7 @@
                         <BoxView Grid.Row="2" BackgroundColor="#D6DFE5" HeightRequest="1"/>
                     </Grid>
 
-                    <Frame Grid.Row="2" HasShadow="False" Margin="0" Padding="0">
+                    <Frame Grid.Row="2" HasShadow="False" Margin="0" Padding="0" IsVisible="{Binding IsActiveCall}">
                         <Frame.GestureRecognizers>
                             <TapGestureRecognizer Tapped="activeCall_Clicked"/>
                         </Frame.GestureRecognizers>
