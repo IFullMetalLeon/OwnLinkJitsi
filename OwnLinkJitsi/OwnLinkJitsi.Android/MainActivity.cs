@@ -15,6 +15,7 @@ using AndroidApp = Android.App.Application;
 using Android.Content;
 using Xamarin.Forms;
 using Android.Media;
+using Plugin.Settings;
 
 namespace OwnLinkJitsi.Droid
 {
@@ -42,6 +43,25 @@ namespace OwnLinkJitsi.Droid
             instance = this;
             CreateNotificationChannel();
             LoadApplication(new App());
+
+            switch (Intent.Action)
+            {
+                case "ACCEPT_ACTION":
+                    {
+                        break;
+                    }
+                case "DECLINE_ACTION":
+                    {
+                        CrossSettings.Current.AddOrUpdateValue("RoomTime", "0");
+                        CrossSettings.Current.AddOrUpdateValue("currentRoom", "");
+                        var manager = (NotificationManager)this.GetSystemService(Context.NotificationService);
+                        manager.CancelAll();
+                        break;
+                    }
+                default:                    
+                    break;
+            }
+
             //FirebasePushNotificationManager.ProcessIntent(this, Intent);
             
         }
@@ -101,7 +121,23 @@ namespace OwnLinkJitsi.Droid
 
         protected override void OnNewIntent(Intent intent)
         {
-            CreateNotificationFromIntent(intent);
+            switch (intent.Action)
+            {
+                case "ACCEPT_ACTION":
+                    Console.WriteLine("hit accept action case.");
+                    break;
+                case "DECLINE_ACTION":
+                    Console.WriteLine("hit decline action case.");
+                    break;
+                default:
+                    Console.WriteLine("didn't hit either action.");
+                    break;
+            }
+
+            var manager = (NotificationManager)this.GetSystemService(Context.NotificationService);
+            manager.CancelAll();
+            base.OnNewIntent(intent);
+            //CreateNotificationFromIntent(intent);
         }
 
         void CreateNotificationFromIntent(Intent intent)

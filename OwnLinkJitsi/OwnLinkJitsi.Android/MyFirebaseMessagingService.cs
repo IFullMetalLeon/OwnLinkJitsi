@@ -8,6 +8,7 @@ using Android.Support.V4.App;
 using Android.Views;
 using Android.Widget;
 using Firebase.Messaging;
+using Plugin.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,15 +78,32 @@ namespace OwnLinkJitsi.Droid
             string body = "";
             if (data.ContainsKey("caller_name"))
                 body = data["caller_name"];
-
+            string room = "";
+            if (data.ContainsKey("room_name"))
+                room = data["room_name"];
             messageId++;
 
+            if (!String.IsNullOrEmpty(room))
+            { 
+                CrossSettings.Current.AddOrUpdateValue("currentRoom", room);
+                double dt = DateTime.Now.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+                
+                CrossSettings.Current.AddOrUpdateValue("RoomTime", dt.ToString());
+            }
 
 
             Intent intent = new Intent(AndroidApp.Context, typeof(MainActivity));
             intent.PutExtra(TitleKey, title);
             intent.PutExtra(MessageKey, body);
 
+            var acceptIntent = new Intent(AndroidApp.Context, typeof(MainActivity));
+            acceptIntent.SetAction("ACCEPT_ACTION");
+            
+            var pendingIntentAccept = PendingIntent.GetActivity(AndroidApp.Context, 12345, acceptIntent, PendingIntentFlags.OneShot);
+
+            var declineIntent = new Intent(this, typeof(MainActivity));
+            declineIntent.SetAction("DECLINE_ACTION");
+            var pendingIntentDecline = PendingIntent.GetActivity(AndroidApp.Context, 12345, declineIntent, PendingIntentFlags.OneShot);
 
 
             PendingIntent pendingIntent = PendingIntent.GetActivity(AndroidApp.Context, pendingIntentId, intent, PendingIntentFlags.OneShot);
@@ -102,7 +120,8 @@ namespace OwnLinkJitsi.Droid
                 .SetLargeIcon(BitmapFactory.DecodeResource(AndroidApp.Context.Resources, Resource.Drawable.icon_large))
                 .SetSmallIcon(Resource.Drawable.notification_tile_bg)
                 .SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Ringtone))
-                .AddAction(Resource.Drawable.DeclineCall,"Cancel", pendingIntent)
+                .AddAction(0, "Отклонить", pendingIntentDecline)
+                .AddAction(0,"Принять", pendingIntentAccept)              
                 //.SetOngoing(true)
                 .SetAutoCancel(true)
                 .SetDefaults((int)NotificationDefaults.Sound | (int)NotificationDefaults.Vibrate);

@@ -60,7 +60,18 @@ namespace OwnLinkJitsi.ViewModel
             s = CrossDeviceInfo.Current.Model;
             s = CrossDeviceInfo.Current.Platform.ToString();
 
-            Room= CrossSettings.Current.GetValueOrDefault("currentRoom", "");
+            Room = CrossSettings.Current.GetValueOrDefault("currentRoom", "");
+
+            string lastTime = CrossSettings.Current.GetValueOrDefault("RoomTime", "0");
+            bool activeCall = false;
+            if (lastTime != "0")
+            {
+                double dt = DateTime.Now.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+                if (dt - Convert.ToDouble(lastTime)<100000)
+                {
+                    activeCall = true;
+                }
+            }
 
             Phone = CrossSettings.Current.GetValueOrDefault("sipPhoneLogin", "");
             _pass = CrossSettings.Current.GetValueOrDefault("sipPhonePass", "");
@@ -94,10 +105,10 @@ namespace OwnLinkJitsi.ViewModel
             CrossFirebasePushNotification.Current.OnNotificationOpened += Current_OnNotificationOpened;
             CrossFirebasePushNotification.Current.OnNotificationAction += Current_OnNotificationAction;*/
 
-            /*if (!String.IsNullOrEmpty(Room))
+            if (!String.IsNullOrEmpty(Room) && activeCall)
             {
                 enterRoom();
-            }*/
+            }
         }
 
         
