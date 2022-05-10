@@ -24,12 +24,13 @@ namespace OwnLinkJitsi.View
             HttpControler.ReadySignSend(phone, deviceId, _url,"Accept");
             CrossSettings.Current.AddOrUpdateValue("currentRoom", "");
             CrossFirebasePushNotification.Current.ClearAllNotifications();
-            enterRoom(_url);
+            enterRoom(_url);          
         }
 
         public async void enterRoom(string _room)
         {
-            await DependencyService.Get<IAppHandler>().LaunchApp(_room);
+            await DependencyService.Get<IAppHandler>().LaunchApp(_room); 
+            await Navigation.PopAsync();
         }
 
         protected override async void OnAppearing()

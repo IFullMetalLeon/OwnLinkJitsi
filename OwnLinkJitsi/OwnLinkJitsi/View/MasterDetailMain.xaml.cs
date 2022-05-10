@@ -1,4 +1,7 @@
 ﻿using OwnLinkJitsi.ViewModel;
+using Plugin.DeviceInfo;
+using Plugin.FirebasePushNotification;
+using Plugin.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -88,12 +91,23 @@ namespace OwnLinkJitsi.View
         {
             if (mdmvm.ReceiveCall)
             {
-                Detail = new NavigationPage(new CallPage(mdmvm.Room));
+                string deviceId = CrossDeviceInfo.Current.Id;
+                string phone = CrossSettings.Current.GetValueOrDefault("sipPhoneLogin", "");
+                HttpControler.ReadySignSend(phone, deviceId, mdmvm.Room, "Accept");
+                CrossSettings.Current.AddOrUpdateValue("currentRoom", "");
+                CrossFirebasePushNotification.Current.ClearAllNotifications();
+                enterRoom(mdmvm.Room);
+                //Detail = new NavigationPage(new CallPage(mdmvm.Room));
                 IsPresented = false;
                 return false;
             }
             else
                 return true;
+        }
+
+        public async void enterRoom(string _room)
+        {
+            await DependencyService.Get<IAppHandler>().LaunchApp(_room);
         }
     }
 }
