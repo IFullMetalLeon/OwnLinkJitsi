@@ -63,15 +63,17 @@ namespace OwnLinkJitsi.ViewModel
             Room = CrossSettings.Current.GetValueOrDefault("currentRoom", "");
 
             string lastTime = CrossSettings.Current.GetValueOrDefault("RoomTime", "0");
+            string needAcc = CrossSettings.Current.GetValueOrDefault("RoomNeedAcc", "");
             bool activeCall = false;
-            if (lastTime != "0")
+            if (lastTime != "0" && String.IsNullOrEmpty(needAcc))
             {
                 double dt = DateTime.Now.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
                 if (dt - Convert.ToDouble(lastTime)<100000)
                 {
                     activeCall = true;
                 }
-            }
+            }           
+
 
             Phone = CrossSettings.Current.GetValueOrDefault("sipPhoneLogin", "");
             _pass = CrossSettings.Current.GetValueOrDefault("sipPhonePass", "");
@@ -104,6 +106,11 @@ namespace OwnLinkJitsi.ViewModel
             CrossFirebasePushNotification.Current.OnNotificationReceived += Current_OnNotificationReceived;
             CrossFirebasePushNotification.Current.OnNotificationOpened += Current_OnNotificationOpened;
             CrossFirebasePushNotification.Current.OnNotificationAction += Current_OnNotificationAction;*/
+
+            if (needAcc == "1")
+            {
+                showAccDialog();
+            }
 
             if (!String.IsNullOrEmpty(Room) && activeCall)
             {
@@ -157,6 +164,21 @@ namespace OwnLinkJitsi.ViewModel
             {
                 openSettings.GoToSettings();
                 CrossSettings.Current.AddOrUpdateValue("sipNotifyPer", "1");
+            }
+        }
+
+        public async void showAccDialog()
+        {
+            CrossSettings.Current.AddOrUpdateValue("RoomNeedAcc", "");
+            var result = await UserDialogs.Instance.ConfirmAsync(new ConfirmConfig
+            {
+                Title = "Входящий вызов",               
+                OkText = "Принять",
+                CancelText = "Отклонить"
+            });
+            if (result)
+            {
+                enterRoom();
             }
         }
 

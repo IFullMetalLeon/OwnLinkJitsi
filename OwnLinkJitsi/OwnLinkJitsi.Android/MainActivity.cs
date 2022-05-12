@@ -48,18 +48,26 @@ namespace OwnLinkJitsi.Droid
             {
                 case "ACCEPT_ACTION":
                     {
+                        CrossSettings.Current.AddOrUpdateValue("RoomNeedAcc", "");
                         break;
                     }
                 case "DECLINE_ACTION":
                     {
                         CrossSettings.Current.AddOrUpdateValue("RoomTime", "0");
                         CrossSettings.Current.AddOrUpdateValue("currentRoom", "");
+                        CrossSettings.Current.AddOrUpdateValue("RoomNeedAcc", "");
                         var manager = (NotificationManager)this.GetSystemService(Context.NotificationService);
                         manager.CancelAll();
                         break;
                     }
-                default:                    
-                    break;
+                default:
+                    {
+                        CrossSettings.Current.AddOrUpdateValue("RoomNeedAcc", "1");
+                        var manager = (NotificationManager)this.GetSystemService(Context.NotificationService);
+                        manager.CancelAll();
+                        break;
+                    }
+                    
             }
 
             //FirebasePushNotificationManager.ProcessIntent(this, Intent);
