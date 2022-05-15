@@ -49,6 +49,8 @@ namespace OwnLinkJitsi.Droid
                 case "ACCEPT_ACTION":
                     {
                         CrossSettings.Current.AddOrUpdateValue("RoomNeedAcc", "");
+                        var manager = (NotificationManager)this.GetSystemService(Context.NotificationService);
+                        manager.CancelAll();
                         break;
                     }
                 case "DECLINE_ACTION":

@@ -65,7 +65,7 @@ namespace OwnLinkJitsi.ViewModel
             string lastTime = CrossSettings.Current.GetValueOrDefault("RoomTime", "0");
             string needAcc = CrossSettings.Current.GetValueOrDefault("RoomNeedAcc", "");
             bool activeCall = false;
-            if (lastTime != "0" && String.IsNullOrEmpty(needAcc))
+            if (lastTime != "0")
             {
                 double dt = DateTime.Now.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
                 if (dt - Convert.ToDouble(lastTime)<100000)
@@ -107,12 +107,12 @@ namespace OwnLinkJitsi.ViewModel
             CrossFirebasePushNotification.Current.OnNotificationOpened += Current_OnNotificationOpened;
             CrossFirebasePushNotification.Current.OnNotificationAction += Current_OnNotificationAction;*/
 
-            if (needAcc == "1")
+            if (!String.IsNullOrEmpty(Room) && needAcc == "1" && activeCall)
             {
                 showAccDialog();
             }
 
-            if (!String.IsNullOrEmpty(Room) && activeCall)
+            if (!String.IsNullOrEmpty(Room) && activeCall && needAcc == "")
             {
                 enterRoom();
             }
