@@ -106,15 +106,22 @@ namespace OwnLinkJitsi.ViewModel
             CrossFirebasePushNotification.Current.OnNotificationReceived += Current_OnNotificationReceived;
             CrossFirebasePushNotification.Current.OnNotificationOpened += Current_OnNotificationOpened;
             CrossFirebasePushNotification.Current.OnNotificationAction += Current_OnNotificationAction;*/
-
+            int f = 0;
             if (!String.IsNullOrEmpty(Room) && needAcc == "1" && activeCall)
             {
+                f = 1;
                 showAccDialog();
             }
 
             if (!String.IsNullOrEmpty(Room) && activeCall && needAcc == "")
             {
+                f = 2;
                 enterRoom();
+            }
+
+            if (f==0 && !String.IsNullOrEmpty(Room))
+            {
+                showAccDialog();
             }
         }
 
@@ -126,9 +133,8 @@ namespace OwnLinkJitsi.ViewModel
         }
 
         public void changePhone()
-        {
-            MessagingCenter.Send<string, string>("Call", "CallState", Room);
-            //Navigation.PushAsync(new LoginPage());
+        {            
+            Navigation.PushAsync(new LoginPage());
         }
 
         public async void checkVersion(string versionNum)
@@ -212,44 +218,6 @@ namespace OwnLinkJitsi.ViewModel
             { }*/
         }
 
-        private void Current_OnNotificationReceived(object source, FirebasePushNotificationDataEventArgs e)
-        {
-            /*string room = "test";
-            try
-            {
-                Room = e.Data["room_name"].ToString();
-                CrossSettings.Current.AddOrUpdateValue("currentRoom", room);
-                enterRoom();
-            }
-            catch (Exception ex)
-            { }*/
-
-        }
-
-        /*private void Current_OnTokenRefresh(object source, FirebasePushNotificationTokenEventArgs e)
-        {
-            CrossSettings.Current.AddOrUpdateValue("FCMToken", e.Token);
-            string deviceId = CrossDeviceInfo.Current.Id;
-            if (!String.IsNullOrEmpty(e.Token))
-                HttpControler.FCMTokenSend(Phone, e.Token, deviceId);
-        }
-
-        private void Current_OnNotificationAction(object source, FirebasePushNotificationResponseEventArgs e)
-        {
-            CrossFirebasePushNotification.Current.ClearAllNotifications();
-            if (e.Identifier == "Accept")
-            {
-                string room = "test";
-                try
-                {
-                    Room = e.Data["room_name"].ToString();
-                    CrossSettings.Current.AddOrUpdateValue("currentRoom", room);
-                    enterRoom();
-                }
-                catch (Exception ex)
-                { }
-            }
-        }*/
 
         public event PropertyChangedEventHandler PropertyChanged;
 

@@ -21,7 +21,7 @@ namespace OwnLinkJitsi
             FCMToken = "";
             
 
-            //CrossSettings.Current.AddOrUpdateValue("sipPhoneLogin", "79041537453");
+            CrossSettings.Current.AddOrUpdateValue("sipPhoneLogin", "79041537453");
             string _login = CrossSettings.Current.GetValueOrDefault("sipPhoneLogin", "");
             string deviceId = CrossDeviceInfo.Current.Id;
             string deviceInfo = CrossDeviceInfo.Current.Manufacturer + " " + CrossDeviceInfo.Current.Model + " " + CrossDeviceInfo.Current.Platform + " " + CrossDeviceInfo.Current.Version;

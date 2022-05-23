@@ -114,12 +114,13 @@ namespace OwnLinkJitsi.Droid
                 //.SetContentIntent(pendingIntent)
                 .SetContentTitle(title)
                 .SetContentText(body)
-                .SetVisibility((int)NotificationVisibility.Public)
+                .SetVisibility(NotificationCompat.VisibilityPublic)
                 .SetFullScreenIntent(pendingIntent, true)
                 .SetPriority((int)NotificationPriority.Max)
                 .SetLargeIcon(BitmapFactory.DecodeResource(AndroidApp.Context.Resources, Resource.Drawable.icon_large))
                 .SetSmallIcon(Resource.Drawable.notification_tile_bg)
                 .SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Ringtone))
+                .SetUsesChronometer(true)
                 .AddAction(0, "Отклонить", pendingIntentDecline)
                 .AddAction(0, "Принять", pendingIntentAccept)
                 //.SetOngoing(true)
@@ -154,7 +155,7 @@ namespace OwnLinkJitsi.Droid
                     Description = channelDescription
                 };
                 channel.SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Ringtone), null);
-
+                channel.Importance = NotificationImportance.Max;
                 channel.LockscreenVisibility = NotificationVisibility.Public;
                 channel.EnableVibration(true);
 

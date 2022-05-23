@@ -19,7 +19,7 @@ using Plugin.Settings;
 
 namespace OwnLinkJitsi.Droid
 {
-    [Activity(Label = "OwnLinkJitsi", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize, ScreenOrientation = ScreenOrientation.Portrait)]
+    [Activity(Label = "Своя связь", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize, ScreenOrientation = ScreenOrientation.Portrait)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         int PERMISSIONS_REQUEST = 101;
@@ -122,6 +122,7 @@ namespace OwnLinkJitsi.Droid
                 channel.SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Ringtone), null);
                 //channel.SetSound(null, null);
                 channel.LockscreenVisibility = NotificationVisibility.Public;
+                channel.Importance = NotificationImportance.Max;
                 channel.EnableVibration(true);
 
                 manager.CreateNotificationChannel(channel);
@@ -131,7 +132,7 @@ namespace OwnLinkJitsi.Droid
 
         protected override void OnNewIntent(Intent intent)
         {
-            switch (intent.Action)
+            /*switch (intent.Action)
             {
                 case "ACCEPT_ACTION":
                     Console.WriteLine("hit accept action case.");
@@ -145,7 +146,7 @@ namespace OwnLinkJitsi.Droid
             }
 
             var manager = (NotificationManager)this.GetSystemService(Context.NotificationService);
-            manager.CancelAll();
+            manager.CancelAll();*/
             base.OnNewIntent(intent);
             //CreateNotificationFromIntent(intent);
         }
