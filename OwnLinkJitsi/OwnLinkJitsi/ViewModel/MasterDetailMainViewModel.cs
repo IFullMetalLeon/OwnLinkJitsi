@@ -36,6 +36,7 @@ namespace OwnLinkJitsi.ViewModel
         public int isNotifySend;
 
         public string _uri;
+        public int f;
         public MasterDetailMainViewModel()
         {
             ChangePhone = new Command(changePhone);
@@ -72,6 +73,11 @@ namespace OwnLinkJitsi.ViewModel
                 {
                     activeCall = true;
                 }
+                else
+                {
+                    CrossSettings.Current.AddOrUpdateValue("currentRoom", "");
+                    Room = "";
+                }
             }           
 
 
@@ -106,22 +112,23 @@ namespace OwnLinkJitsi.ViewModel
             CrossFirebasePushNotification.Current.OnNotificationReceived += Current_OnNotificationReceived;
             CrossFirebasePushNotification.Current.OnNotificationOpened += Current_OnNotificationOpened;
             CrossFirebasePushNotification.Current.OnNotificationAction += Current_OnNotificationAction;*/
-            int f = 0;
+            f = 0;
             if (!String.IsNullOrEmpty(Room) && needAcc == "1" && activeCall)
             {
                 f = 1;
-                showAccDialog();
+                //showAccDialog();
             }
 
             if (!String.IsNullOrEmpty(Room) && activeCall && needAcc == "")
             {
                 f = 2;
-                enterRoom();
+                //enterRoom();
             }
 
             if (f==0 && !String.IsNullOrEmpty(Room))
             {
-                showAccDialog();
+                f = 1;
+                //showAccDialog();
             }
         }
 
@@ -186,6 +193,12 @@ namespace OwnLinkJitsi.ViewModel
             {
                 enterRoom();
             }
+            else
+            {
+                CrossSettings.Current.AddOrUpdateValue("currentRoom", "");
+                Room = "";
+            }
+
         }
 
         public async void enterRoom()

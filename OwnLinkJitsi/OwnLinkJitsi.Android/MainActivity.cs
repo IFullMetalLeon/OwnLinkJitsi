@@ -66,7 +66,7 @@ namespace OwnLinkJitsi.Droid
                     {
                         CrossSettings.Current.AddOrUpdateValue("RoomNeedAcc", "1");
                         var manager = (NotificationManager)this.GetSystemService(Context.NotificationService);
-                        manager.CancelAll();
+                        //manager.CancelAll();
                         break;
                     }
                     

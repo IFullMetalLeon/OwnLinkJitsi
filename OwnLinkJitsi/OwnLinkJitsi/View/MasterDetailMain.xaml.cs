@@ -1,4 +1,5 @@
-﻿using OwnLinkJitsi.ViewModel;
+﻿using Acr.UserDialogs;
+using OwnLinkJitsi.ViewModel;
 using Plugin.DeviceInfo;
 using Plugin.FirebasePushNotification;
 using Plugin.Settings;
@@ -19,6 +20,7 @@ namespace OwnLinkJitsi.View
         public MasterDetailMainViewModel mdmvm { get; set; }
         public int flag;
         public int isCallShow;
+        public int isShow;
         public MasterDetailMain()
         {
             InitializeComponent();
@@ -26,6 +28,7 @@ namespace OwnLinkJitsi.View
             this.BindingContext = mdmvm;
             flag = 0;
             isCallShow = 0;
+            isShow = 0;
         }
 
         protected override void OnAppearing()
@@ -89,20 +92,71 @@ namespace OwnLinkJitsi.View
 
         private bool OnTimerTick()
         {
-            if (mdmvm.ReceiveCall)
+            if (mdmvm.f!=0)
+            {
+                if (mdmvm.f == 2)
+                {
+                    string deviceId = CrossDeviceInfo.Current.Id;
+                    string phone = CrossSettings.Current.GetValueOrDefault("sipPhoneLogin", "");
+                    HttpControler.ReadySignSend(phone, deviceId, mdmvm.Room, "Accept");
+                    CrossSettings.Current.AddOrUpdateValue("RoomTime", "0");
+                    CrossSettings.Current.AddOrUpdateValue("currentRoom", "");
+                    CrossSettings.Current.AddOrUpdateValue("RoomNeedAcc", "");
+                    CrossFirebasePushNotification.Current.ClearAllNotifications();
+                    enterRoom(mdmvm.Room);
+                    //Detail = new NavigationPage(new CallPage(mdmvm.Room));
+                    IsPresented = false;
+                    return false;
+                }
+                else
+                {
+                    if (isShow == 0 && mdmvm.Room!="")
+                    {
+                        isShow = 1;
+                        showAccDialog();
+                        isShow = 0;
+                    }
+                    return true;
+                }
+            }
+            if (mdmvm.Room == "")
+                return false;
+            else
+                return true;
+        }
+
+        public async void showAccDialog()
+        {
+            isShow = 1;
+            CrossSettings.Current.AddOrUpdateValue("RoomNeedAcc", "");
+            var result = await UserDialogs.Instance.ConfirmAsync(new ConfirmConfig
+            {
+                Title = "Входящий вызов",
+                OkText = "Принять",
+                CancelText = "Отклонить"
+            });
+            if (result)
             {
                 string deviceId = CrossDeviceInfo.Current.Id;
                 string phone = CrossSettings.Current.GetValueOrDefault("sipPhoneLogin", "");
                 HttpControler.ReadySignSend(phone, deviceId, mdmvm.Room, "Accept");
+                CrossSettings.Current.AddOrUpdateValue("RoomTime", "0");
                 CrossSettings.Current.AddOrUpdateValue("currentRoom", "");
+                CrossSettings.Current.AddOrUpdateValue("RoomNeedAcc", "");
                 CrossFirebasePushNotification.Current.ClearAllNotifications();
                 enterRoom(mdmvm.Room);
+                mdmvm.Room = "";
                 //Detail = new NavigationPage(new CallPage(mdmvm.Room));
                 IsPresented = false;
-                return false;
             }
             else
-                return true;
+            {
+                CrossSettings.Current.AddOrUpdateValue("RoomTime", "0");
+                CrossSettings.Current.AddOrUpdateValue("currentRoom", "");
+                CrossSettings.Current.AddOrUpdateValue("RoomNeedAcc", "");
+                mdmvm.Room = "";
+            }
+            isShow = 0;
         }
 
         public async void enterRoom(string _room)

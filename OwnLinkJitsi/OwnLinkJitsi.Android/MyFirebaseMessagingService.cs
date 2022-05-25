@@ -121,8 +121,8 @@ namespace OwnLinkJitsi.Droid
                 .SetSmallIcon(Resource.Drawable.notification_tile_bg)
                 .SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Ringtone))
                 .SetUsesChronometer(true)
-                //.AddAction(0, "Отклонить", pendingIntentDecline)
-                //.AddAction(0, "Принять", pendingIntentAccept)
+                .AddAction(0, "Отклонить", pendingIntentDecline)
+                .AddAction(0, "Принять", pendingIntentAccept)
                 //.SetOngoing(true)
                 .SetAutoCancel(true)
                 .SetDefaults((int)NotificationDefaults.Sound | (int)NotificationDefaults.Vibrate);
