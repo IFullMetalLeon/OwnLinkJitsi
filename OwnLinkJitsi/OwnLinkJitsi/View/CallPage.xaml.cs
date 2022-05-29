@@ -16,6 +16,7 @@ namespace OwnLinkJitsi.View
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class CallPage : ContentPage
     {
+        public string _room;
         public CallPage(string _url)
         {
             InitializeComponent();           
@@ -24,13 +25,13 @@ namespace OwnLinkJitsi.View
             HttpControler.ReadySignSend(phone, deviceId, _url,"Accept");
             CrossSettings.Current.AddOrUpdateValue("currentRoom", "");
             CrossFirebasePushNotification.Current.ClearAllNotifications();
-            enterRoom(_url);          
+            _room = _url;
+            //enterRoom(_url);          
         }
 
         public async void enterRoom(string _room)
         {
-            await DependencyService.Get<IAppHandler>().LaunchApp(_room); 
-            await Navigation.PopAsync();
+            await DependencyService.Get<IAppHandler>().LaunchApp(_room);             
         }
 
         protected override async void OnAppearing()
@@ -55,6 +56,16 @@ namespace OwnLinkJitsi.View
                 {
                 }
             }
+        }
+
+        private void Button_Clicked(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Button_Clicked_1(object sender, EventArgs e)
+        {
+            enterRoom(_room);
         }
     }
 }

@@ -127,7 +127,8 @@ namespace OwnLinkJitsi.View
 
         public async void showAccDialog()
         {
-            isShow = 1;
+
+            /*isShow = 1;
             CrossSettings.Current.AddOrUpdateValue("RoomNeedAcc", "");
             var result = await UserDialogs.Instance.ConfirmAsync(new ConfirmConfig
             {
@@ -156,7 +157,10 @@ namespace OwnLinkJitsi.View
                 CrossSettings.Current.AddOrUpdateValue("RoomNeedAcc", "");
                 mdmvm.Room = "";
             }
-            isShow = 0;
+            isShow = 0;*/
+
+            Detail = new NavigationPage(new CallPage(mdmvm.Room));
+            IsPresented = false;
         }
 
         public async void enterRoom(string _room)

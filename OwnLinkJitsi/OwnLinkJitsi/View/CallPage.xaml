@@ -4,8 +4,8 @@
              x:Class="OwnLinkJitsi.View.CallPage">
     <ContentPage.Content>
         <StackLayout>
-            <views:GenericWebView x:Name="CallWebView" VerticalOptions="FillAndExpand" 
-                 HorizontalOptions="FillAndExpand" />
+            <Button Text="Отклонить" Clicked="Button_Clicked"/>
+            <Button Text="Принять" Clicked="Button_Clicked_1"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
