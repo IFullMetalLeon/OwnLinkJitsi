@@ -16,56 +16,39 @@ namespace OwnLinkJitsi.View
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class CallPage : ContentPage
     {
-        public string _room;
-        public CallPage(string _url)
+        public CallPageViewModel cpvm { get; set; }
+        public CallPage()
         {
-            InitializeComponent();           
-            string deviceId = CrossDeviceInfo.Current.Id;
-            string phone = CrossSettings.Current.GetValueOrDefault("sipPhoneLogin", "");
-            HttpControler.ReadySignSend(phone, deviceId, _url,"Accept");
-            CrossSettings.Current.AddOrUpdateValue("currentRoom", "");
-            CrossFirebasePushNotification.Current.ClearAllNotifications();
-            _room = _url;
-            //enterRoom(_url);          
+            InitializeComponent();
+            cpvm = new CallPageViewModel();
+            this.BindingContext = cpvm;
+ 
         }
 
-        public async void enterRoom(string _room)
-        {
-            await DependencyService.Get<IAppHandler>().LaunchApp(_room);             
-        }
 
-        protected override async void OnAppearing()
+        protected override void OnAppearing()
         {
             base.OnAppearing();
-            await Task.Delay(1000);
-
-            var status = await Permissions.CheckStatusAsync<Permissions.Camera>();
-            if (status != PermissionStatus.Granted)
-            {
-                var response = await Permissions.RequestAsync<Permissions.Camera>();
-                if (response != PermissionStatus.Granted)
-                {
-                }
-            }
-
-            var statusMic = await Permissions.CheckStatusAsync<Permissions.Microphone>();
-            if (statusMic != PermissionStatus.Granted)
-            {
-                var response = await Permissions.RequestAsync<Permissions.Microphone>();
-                if (response != PermissionStatus.Granted)
-                {
-                }
-            }
+            cpvm.beginPage();
+            Device.StartTimer(TimeSpan.FromSeconds(1), OnTimerTick);
         }
 
-        private void Button_Clicked(object sender, EventArgs e)
+        protected override void OnDisappearing()
         {
-
+            base.OnDisappearing();
+            cpvm.endPage();
         }
 
-        private void Button_Clicked_1(object sender, EventArgs e)
+        private bool OnTimerTick()
         {
-            enterRoom(_room);
+            string _room = CrossSettings.Current.GetValueOrDefault("currentRoom", "");
+            if(String.IsNullOrEmpty(_room))
+            {
+                MessagingCenter.Send<string, string>("Call", "CallState", "End");
+                return true;
+            }
+            else
+                return false;
         }
     }
 }

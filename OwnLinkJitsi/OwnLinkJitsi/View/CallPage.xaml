@@ -1,11 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:views="clr-namespace:OwnLinkJitsi.View"
-             x:Class="OwnLinkJitsi.View.CallPage">
+             x:Class="OwnLinkJitsi.View.CallPage"
+             Title="CallPage">
     <ContentPage.Content>
-        <StackLayout>
-            <Button Text="Отклонить" Clicked="Button_Clicked"/>
-            <Button Text="Принять" Clicked="Button_Clicked_1"/>
-        </StackLayout>
+        <Grid BackgroundColor="#000000">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="4*"/>
+                <RowDefinition Height="7*"/>
+            </Grid.RowDefinitions>
+            <Frame Grid.Row="0" HasShadow="False" BackgroundColor="#000000">
+                <Label x:Name="nameCall" Grid.Row="0" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" VerticalOptions="End" >
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span FontSize="26" Text="Входящий звонок" TextColor="#FFFFFF"/>
+                            <Span Text="&#xA;"/>
+                            <Span FontSize="26" Text="{Binding Name}" TextColor="#FFFFFF"/>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+
+            </Frame>
+          
+            <Frame Grid.Row="1"  BackgroundColor="#000000" HorizontalOptions="Center">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <ImageButton Grid.Column="0" Source="DeclineCall.png" Aspect="AspectFit" BackgroundColor="#E74705" Command="{Binding CancelCall}" CornerRadius="30" HeightRequest="60" WidthRequest="120" HorizontalOptions="Center" VerticalOptions="Center" Margin="0,0,25,0"/>
+                    <ImageButton Grid.Column="1" Source="AcceptCall.png" Aspect="AspectFit"  BackgroundColor="#19B933" Command="{Binding AcceptCall}" CornerRadius="30" HeightRequest="60" WidthRequest="120" HorizontalOptions="Center" VerticalOptions="Center" Padding="10" Margin="25,0,0,0"/>
+                </Grid>
+            </Frame>
+
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

@@ -86,6 +86,7 @@ namespace OwnLinkJitsi.Droid
             if (!String.IsNullOrEmpty(room))
             { 
                 CrossSettings.Current.AddOrUpdateValue("currentRoom", room);
+                CrossSettings.Current.AddOrUpdateValue("callerName", body);
                 double dt = DateTime.Now.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
                 
                 CrossSettings.Current.AddOrUpdateValue("RoomTime", dt.ToString());
