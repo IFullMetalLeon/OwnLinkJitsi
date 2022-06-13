@@ -100,6 +100,13 @@ namespace OwnLinkJitsi.ViewModel
 
             isNotifySend = 0;
 
+            if (!DependencyService.Get<IAppHandler>().CheckApp("123").Result)
+            {
+                checkJitsuInstall();
+            }
+           
+
+
 
             string isNotificationPermission = CrossSettings.Current.GetValueOrDefault("sipNotifyPer", "0");
             if (isNotificationPermission == "0")
@@ -177,6 +184,21 @@ namespace OwnLinkJitsi.ViewModel
             {
                 openSettings.GoToSettings();
                 CrossSettings.Current.AddOrUpdateValue("sipNotifyPer", "1");
+            }
+        }
+
+        public async void checkJitsuInstall()
+        {
+            var result = await UserDialogs.Instance.ConfirmAsync(new ConfirmConfig
+            {
+                Title = "Модуль связи",
+                Message = "Для корректной работы приложения нужно скачать Модуль для связи",
+                OkText = "Скачать",
+                CancelText = "Отмена"
+            });
+            if (result)
+            {
+                await Launcher.OpenAsync("https://ic2.pismo-fsin.ru/upgrade/app-release.apk");
             }
         }
 

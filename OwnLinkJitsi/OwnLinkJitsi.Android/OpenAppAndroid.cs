@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
@@ -29,6 +30,22 @@ namespace OwnLinkJitsi.Droid
             intent.AddFlags(ActivityFlags.NewTask);
             Android.App.Application.Context.StartActivity(intent);
 
+            return Task.FromResult(result);
+        }
+
+        public Task<bool> CheckApp(string packageName)
+        {
+            bool result = true;
+            
+            try
+            {
+                ApplicationInfo qw = Android.App.Application.Context.PackageManager.GetApplicationInfo("net.jitsi.sdktest", PackageInfoFlags.Activities);
+                
+            }
+            catch(Exception ex)
+            {
+                result = false;
+            }
             return Task.FromResult(result);
         }
     }

@@ -46,5 +46,6 @@ namespace OwnLinkJitsi
     public interface IAppHandler
     {
         Task<bool> LaunchApp(string uri);
+        Task<bool> CheckApp(string uri);
     }
 }
